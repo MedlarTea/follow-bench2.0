@@ -1,0 +1,67 @@
+name: followbench
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      # CARLA 0.9.16 Python API (cp310). Replace with the wheel matching your
+      # local CARLA install; see README §Setup.
+      # - <path-to>/CARLA_0.9.16/PythonAPI/carla/dist/carla-0.9.16-cp310-cp310-linux_x86_64.whl
+      - numpy==1.26.4
+      - pillow==10.4.0
+      - pygame==2.6.1
+      - pyzmq==27.1.0
+      - opencv-python==4.8.1.78
+      - imageio==2.35.1
+      - future==1.0.0
+      - networkx==3.4.2
+      - Shapely==2.1.2
+      - matplotlib==3.10.9
+      - open3d==0.19.0
+
+      # --- RDA planner ---
+      - cvxpy==1.5.2
+      - pathos==0.3.4
+      - scipy==1.11.4
+      - osqp==1.1.1
+      - scikit-learn==1.4.2
+      - filterpy==1.4.5
+
+      # --- YOLO / tracker (perception-frontend planners) ---
+      - ultralytics==8.4.41
+      - lap==0.5.13
+
+      # --- Target ReID (basic) ---
+      - torch==2.11.0
+      - torchvision==0.26.0
+
+      # --- KPR / deep-person-reid (occlusion-robust ReID backbone) ---
+      - timm
+      - yacs
+      - omegaconf
+      - albumentations==1.3.1
+      - tabulate
+      - h5py
+      - torchmetrics
+      - monai
+      - tensorboard
+      - wandb
+      - deepdiff
+      - gdown
+      # KPR also needs (install from source after env creation):
+      #   pip install "segment_anything @ git+https://github.com/facebookresearch/segment-anything"
+      #   pip install "cosine_annealing_warmup @ git+https://github.com/katsura-jp/pytorch-cosine-annealing-with-warmup"
+
+      # --- TrackVLA end-to-end planner ---
+      - transformers==5.7.0
+      - peft==0.19.1
+      - tokenizers==0.22.2
+      - accelerate==1.13.0
+
+      # --- OA-VAT planner (YOLOe + ORTrack + DINOv3-ReID + PID) ---
+      - tensorboardX
+      - jpeg4py
+      - easydict
+      - einops
+      - ftfy

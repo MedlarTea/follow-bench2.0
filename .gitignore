@@ -1,0 +1,44 @@
+# ── Simulator + assets (not part of this code release) ──────────────────────
+data/
+weights/
+CARLA*/
+
+# ── Run outputs (regenerated each run) ──────────────────────────────────────
+runs/
+scenario/evaluation/results/
+scenario/evaluation/logs/
+scenario/*/runs/
+scenario/*/difficulty_screenshots/
+
+# ── Generated map artifacts ─────────────────────────────────────────────────
+walker_navmask.png
+walker_navmask_meta.txt
+
+# ── Python cache / build ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+*.egg-info/
+build/
+dist/
+
+# ── Editor / OS noise ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── Misc generated ──────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.zip
+
+# ── Model checkpoints (*.pt etc. live under data/, downloaded separately) ───
+*.pt
+*.pth
+*.pth.tar
+*.t7
+*.ts
