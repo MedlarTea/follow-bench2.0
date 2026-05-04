@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 BASE_DIR="$(cd "$ROOT_DIR/runner" && pwd)"
 
-PLANNER="${PLANNER:-pid}"
+PLANNER="${PLANNER:-rda_traj}"
 FOLLOW_POSITION="${FOLLOW_POSITION:-back}"
 DESIRED_DISTANCE="${DESIRED_DISTANCE:-1.5}"
 

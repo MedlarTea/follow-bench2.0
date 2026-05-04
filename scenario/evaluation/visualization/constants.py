@@ -8,29 +8,25 @@ DEFAULT_LOG_ROOT = os.path.join(EVALUATION_DIR, "logs")
 DEFAULT_RESULTS_DIR = os.path.join(EVALUATION_DIR, "results")
 
 METHOD_LABELS = {
-    "pid": "PID",
-    "dwa_traj": "DWA-Traj",
-    "dwa_traj_depth_tpt": "DWA-Traj-DTPT",
     "sfm": "SFM",
-    "rda": "RDA",
-    "rda_lidar": "RDA-LiDAR",
-    "rda_traj": "RDA-Traj",
-    "rda_search": "RDA-Search",
-    "rda_depth_tpt": "RDA-DTPT",
+    "dwa_traj": "DWA",
+    "rda": "MPC",
+    "rda_traj": "MPC w/ Traj.",
+    "rda_search": "MPC + DS",
     "bso_hfc": "BSO-HFC",
+    "trackvla": "TrackVLA",
+    "oa_vat": "OA-VAT",
 }
 
 COLORS = {
-    "pid": "#4c78a8",
-    "dwa_traj": "#f58518",
-    "dwa_traj_depth_tpt": "#ffbf79",
     "sfm": "#54a24b",
+    "dwa_traj": "#f58518",
     "rda": "#e45756",
-    "rda_lidar": "#b279a2",
     "rda_traj": "#9d755d",
     "rda_search": "#72b7b2",
-    "rda_depth_tpt": "#d37295",
     "bso_hfc": "#13a8a8",
+    "trackvla": "#4c78a8",
+    "oa_vat": "#b279a2",
 }
 
 LINE_STYLES = {

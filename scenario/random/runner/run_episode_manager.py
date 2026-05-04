@@ -387,9 +387,9 @@ def build_parser() -> argparse.Namespace:
     p.add_argument("--robot-rescue-lift-z", type=float, default=0.20)
     p.add_argument(
         "--planner",
-        choices=["pid", "dwa_traj", "dwa_traj_depth_tpt", "sfm", "rda", "rda_lidar", "rda_traj", "rda_search", "rda_depth_tpt", "bso_hfc", "trackvla", "oa_vat"],
-        default="pid",
-        help="Follow policy: pid (default), dwa_traj, dwa_traj_depth_tpt, sfm, rda, rda_lidar, rda_traj, rda_search, rda_depth_tpt, bso_hfc, trackvla, oa_vat",
+        choices=["sfm", "dwa_traj", "rda", "rda_traj", "rda_search", "bso_hfc", "trackvla", "oa_vat"],
+        default="rda_traj",
+        help="Follow policy: rda_traj (default, MPC w/ Traj.), sfm, dwa_traj, rda, rda_search, bso_hfc, trackvla, oa_vat",
     )
     p.add_argument("--follow-position", choices=["back", "left_side", "right_side"], default="back")
     p.add_argument("--desired-distance", type=float, default=1.5)
@@ -417,8 +417,9 @@ def build_parser() -> argparse.Namespace:
         action="store_true",
         help="Wrap the chosen --planner with a YOLO+depth+ReID perception "
              "frontend (multi-view). Target and NPC positions come from the "
-             "tracker instead of GT. Compatible with every planner except "
-             "rda_depth_tpt (which already has its own perception path). "
+             "tracker instead of GT. Compatible with every model-based planner; "
+             "the end-to-end policies (trackvla, oa_vat) carry their own "
+             "perception and ignore this flag. "
              "The --reid-* and --lost-policy flags below are only consulted "
              "when --use-perception is set.",
     )
@@ -1047,10 +1048,6 @@ def main() -> None:
         else:
             from adapters.dwa_traj_adapter import DwaTrajFollowerPolicy  # noqa: PLC0415
             policy = DwaTrajFollowerPolicy(dt=args.dt, **policy_kwargs)
-    elif args.planner == "dwa_traj_depth_tpt":
-        # No perception wrapper — this adapter already runs its own perception.
-        from adapters.dwa_traj_depth_tpt_adapter import DwaTrajDepthTptFollowerPolicy  # noqa: PLC0415
-        policy = DwaTrajDepthTptFollowerPolicy(dt=args.dt, **policy_kwargs)
     elif args.planner == "sfm":
         if perception_kwargs is not None:
             from adapters.sfm_perception_adapter import SfmPerceptionFollowerPolicy  # noqa: PLC0415
@@ -1071,14 +1068,6 @@ def main() -> None:
         else:
             from adapters.rda_adapter import RdaFollowerPolicy  # noqa: PLC0415
             policy = RdaFollowerPolicy(dt=args.dt, **policy_kwargs)
-    elif args.planner == "rda_lidar":
-        if perception_kwargs is not None:
-            from adapters.rda_lidar_perception_adapter import RdaLidarPerceptionFollowerPolicy  # noqa: PLC0415
-            policy = RdaLidarPerceptionFollowerPolicy(
-                dt=args.dt, **policy_kwargs, **perception_kwargs)
-        else:
-            from adapters.rda_lidar_adapter import RdaLidarFollowerPolicy  # noqa: PLC0415
-            policy = RdaLidarFollowerPolicy(dt=args.dt, **policy_kwargs)
     elif args.planner == "rda_traj":
         if perception_kwargs is not None:
             from adapters.rda_traj_perception_adapter import RdaTrajPerceptionFollowerPolicy  # noqa: PLC0415
@@ -1106,10 +1095,6 @@ def main() -> None:
         else:
             from adapters.rda_search_adapter import RdaSearchFollowerPolicy  # noqa: PLC0415
             policy = RdaSearchFollowerPolicy(dt=args.dt, **policy_kwargs, **search_kwargs)
-    elif args.planner == "rda_depth_tpt":
-        # No perception wrapper — this adapter already runs its own perception.
-        from adapters.rda_depth_tpt_adapter import RdaDepthTptFollowerPolicy  # noqa: PLC0415
-        policy = RdaDepthTptFollowerPolicy(dt=args.dt, **policy_kwargs)
     elif args.planner == "bso_hfc":
         if perception_kwargs is not None:
             from adapters.bso_hfc_perception_adapter import BsoHfcPerceptionFollowerPolicy  # noqa: PLC0415
@@ -1153,14 +1138,8 @@ def main() -> None:
             yolo_conf_thresh=args.oa_vat_yolo_conf,
             target_area_ratio=args.oa_vat_target_area_ratio,
         )
-    else:  # pid (default)
-        if perception_kwargs is not None:
-            from adapters.pid_perception_adapter import PidPerceptionFollowerPolicy  # noqa: PLC0415
-            policy = PidPerceptionFollowerPolicy(
-                dt=args.dt, **policy_kwargs, **perception_kwargs)
-        else:
-            from adapters.pid_adapter import PIDFollowerPolicy  # noqa: PLC0415
-            policy = PIDFollowerPolicy(dt=args.dt, **policy_kwargs)
+    else:
+        raise SystemExit(f"unknown --planner: {args.planner}")
     vis_checker = InstanceVisibilityChecker(threshold=args.visibility_threshold)
     eval_enabled = bool(args.enable_evaluation)
     eval_started = False

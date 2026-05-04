@@ -68,12 +68,12 @@ camera-ready version.
 
 ### 2.1 Simulator
 
-We use **CARLA 0.9.16** with a custom NavMesh + crowd-flow extension. The
+We use Unreal Engine (UE) with a custom NavMesh + crowd-flow extension. The
 custom build, walker assets, and pretrained weights are part of the
 **institutional release** — we will publish them alongside the camera-ready
 paper. For review, only the code in this repository is available.
 
-If you have access to a stock CARLA 0.9.16 install, the framework imports and
+If you have access to a stock UE install, the framework imports and
 unit tests will run; full-scenario simulation additionally needs our
 walker / NavMesh assets.
 
@@ -167,48 +167,88 @@ visualiser in a side process. Source under `scenario/debug_vis/`.
 
 ## 4. Available planners and follow settings
 
-Follow-Bench 2.0 ships 12 planners covering classical model-based control,
-sensor-driven perception variants, and end-to-end learned policies. All
-planners implement the same `FollowerPolicyAdapter` ABC
+Follow-Bench 2.0 ships **8 follower policies** spanning three paradigms:
+modular (BEV perception → motion planner), end-to-end vision-language-action
+(VLA), and foundation-model-based tracking + low-level control. All policies
+implement the same `FollowerPolicyAdapter` ABC
 (`scenario/random/follow_policy_adapter.py`) with `reset()` and `act()`.
 
-| Planner              | Type        | Perception input           | Tracking / Re-acquisition       | Follow position | CLI                                     |
-|----------------------|-------------|----------------------------|---------------------------------|-----------------|-----------------------------------------|
-| `pid`                | Classical   | GT pose                    | —                               | back / side     | `--planner pid`                         |
-| `sfm`                | Classical   | GT pose                    | —                               | back / side     | `--planner sfm`                         |
-| `dwa_traj`           | Classical   | GT pose + traj-pred        | —                               | back / side     | `--planner dwa_traj`                    |
-| `dwa_traj_depth_tpt` | Classical   | RGB-D + traj-pred          | Appearance ReID (basic/KPR)     | back / side     | `--planner dwa_traj_depth_tpt`          |
-| `rda`                | Classical   | GT pose                    | —                               | back / side     | `--planner rda`                         |
-| `rda_lidar`          | Classical   | LiDAR                      | Geometry-only                   | back / side     | `--planner rda_lidar`                   |
-| `rda_traj`           | Classical   | GT pose + traj-pred        | —                               | back / side     | `--planner rda_traj`                    |
-| `rda_search`         | Classical   | RGB-D + ReID               | Appearance + geometry recovery  | back / side     | `--planner rda_search`                  |
-| `rda_depth_tpt`      | Classical   | RGB-D + ReID               | Appearance ReID (basic/KPR)     | back / side     | `--planner rda_depth_tpt`               |
-| `bso_hfc`            | Classical   | GT pose                    | Hierarchical fuzzy controller   | back / side     | `--planner bso_hfc`                     |
-| `trackvla` *         | Learned     | RGB (front)                | VLA, ego-centric prompts        | back            | `--planner trackvla`                    |
-| `oa_vat` *           | Learned     | RGB (front)                | YOLOe → ORTrack → DINOv3 ReID + PID | back        | `--planner oa_vat`                      |
+| Paper name             | CLI                       | Paradigm     | Perception input         | Follow position | Origin                              |
+|------------------------|---------------------------|--------------|--------------------------|-----------------|-------------------------------------|
+| **SFM** [3]            | `--planner sfm`           | Modular (MB) | BEV (Track + ReID)       | back / side     | Ferrer *et al.* 2013 [3]            |
+| **DWA** [4]            | `--planner dwa_traj`      | Modular (MB) | BEV (Track + ReID)       | back / side     | Van Dang *et al.* 2022 [4]          |
+| **MPC** [5]            | `--planner rda`           | Modular (MB) | BEV (Track + ReID)       | back / side     | Han *et al.* (RDA) 2023 [5]         |
+| **MPC w/ Traj.** [6]   | `--planner rda_traj`      | Modular (MB) | BEV + traj. forecast     | back / side     | Sekiguchi *et al.* 2021 [6]         |
+| **MPC + DS** [7]       | `--planner rda_search`    | Modular (MB) | BEV + field-based search | back / side     | Ye *et al.* (RPF-Search) 2025 [7]   |
+| **BSO-HFC** [8]        | `--planner bso_hfc`       | Modular (MB) | BEV (Track + ReID)       | back / side     | Lyu *et al.* 2025 [8]               |
+| **TrackVLA** [1]       | `--planner trackvla`      | End-to-end VLA (LB)              | front RGB + language    | back            | Wang *et al.* 2025 [1]; reproduced on OpenTrackVLA [9] with Qwen3-4B [10] |
+| **OA-VAT** [2]         | `--planner oa_vat`        | Foundation-model + PID (LB)      | front RGB               | back            | Sun *et al.* 2026 [2]               |
 
-\* Re-implemented from public baselines (TrackVLA [1], OA-VAT [2]) under the
-shared `FollowerPolicyAdapter` interface for fair comparison.
+The default planner is `rda_traj` ("MPC w/ Traj.").
 
-**Perception frontend.** Any classical planner above can be wrapped with a
-multi-view YOLO + depth + ReID frontend that replaces GT poses with detected
-tracks:
+**References for the table above.**
+
+[1] S. Wang *et al.*, "TrackVLA: Embodied Visual Tracking in the Wild," *Conference on Robot Learning (CoRL)*, 2025. *(TrackVLA)*
+
+[2] H. Sun *et al.*, "Instance-level Visual Active Tracking with Occlusion-Aware Planning," *arXiv preprint arXiv:2604.21453*, 2026. SOTA in EVT-Bench and DAT, accepted by CVPR 2026. *(OA-VAT)*
+
+[3] G. Ferrer, A. Garrell, and A. Sanfeliu, "Robot Companion: A Social-Force Based Approach with Human Awareness-Navigation in Crowded Environments," *IROS*, pp. 1688–1694, 2013. *(SFM)*
+
+[4] C. Van Dang, H. Ahn, J.-W. Kim, and S. C. Lee, "Collision-Free Navigation in Human-Following Task Using a Cognitive Robotic System on Differential-Drive Vehicles," *IEEE Trans. Cogn. Develop. Syst.*, vol. 15, no. 1, pp. 78–87, 2022. *(DWA)*
+
+[5] R. Han *et al.*, "RDA: An Accelerated Collision-Free Motion Planner for Autonomous Navigation in Cluttered Environments," *IEEE Robot. Autom. Lett.*, vol. 8, no. 3, pp. 1715–1722, 2023. *(MPC)*
+
+[6] S. Sekiguchi *et al.*, "Uncertainty-Aware Non-Linear Model Predictive Control for Human-Following Companion Robot," *ICRA*, pp. 8316–8322, 2021. *(MPC w/ Traj.)*
+
+[7] H. Ye, K. Cai, Y. Zhan, B. Xia, A. Ajoudani, and H. Zhang, "RPF-Search: Field-Based Search for Robot Person Following in Unknown Dynamic Environments," *IEEE/ASME Trans. Mechatronics*, vol. 30, no. 6, pp. 4129–4141, 2025. *(MPC + DS)*
+
+[8] H. Lyu and W. Wu, "A Robust Human-Following System for Autonomous Mobile Robot in Unknown Environments," *IEEE Sensors J.*, 2025. *(BSO-HFC)*
+
+[9] K. Lee, H. Ying, and T. Zhao, "OpenTrackVLA: Open-Source Visual Language Action Model for Visual Navigation and Following," GitHub repository, 2025. <https://github.com/om-ai-lab/OpenTrackVLA>
+
+[10] A. Yang *et al.*, "Qwen3 Technical Report," *arXiv preprint arXiv:2505.09388*, 2025.
+
+[11] Y. Zhang *et al.*, "ByteTrack: Multi-Object Tracking by Associating Every Detection Box," *ECCV*, 2022.
+
+[12] H. Ye, J. Zhao, Y. Zhan, W. Chen, L. He, and H. Zhang, "Person Re-Identification for Robot Person Following with Online Continual Learning," *IEEE Robot. Autom. Lett.*, 2024. *(Target-ReID)*
+
+[13] P. Dendorfer *et al.*, "MOT20: A Benchmark for Multi Object Tracking in Crowded Scenes," *arXiv preprint arXiv:2003.09003*, 2020. *(ResNet-18 ReID baseline)*
+
+[14] V. Somers, A. Alahi, and C. De Vleeschouwer, "Keypoint Promptable Re-Identification," *ECCV*, pp. 216–233, 2025. *(KPR)*
+
+[15] S. Bai *et al.*, "Qwen3-VL Technical Report," *arXiv preprint arXiv:2511.21631*, 2025. *(target-prompt VLM)*
+
+**Modular tracking module.** Following TPT-Bench (§5, [4]), every modular policy
+shares a common BEV perception frontend that combines **ByteTrack [11]** with
+**Target-ReID [12]**. The ReID backbone is selectable:
 
 ```bash
 --use-perception --reid-mode {basic,kpr}
 ```
 
-`basic` is a lightweight ResNet extractor; `kpr` is the SOLIDER-Swin
-keypoint-promptable ReID (occlusion-robust). The end-to-end planners
-(`trackvla`, `oa_vat`) carry their own perception and ignore this flag.
+* `basic` — ResNet-18 extractor [13] (lightweight)
+* `kpr`   — Keypoint Promptable ReID with SOLIDER-Swin [14] (occlusion-robust)
 
-**Follow-position policies.** `back` (classical PETS-style), `left_side`,
-`right_side` (socially-aware abreast follow). The target-route lane bias has
-two modes:
+Under back-following the perception frontend uses the front RGB-D camera
+only; under side-following the same pipeline runs independently on the
+front, left, and right RGB-D cameras and fuses tracks at the field-of-view
+overlap. The end-to-end policies (`trackvla`, `oa_vat`) carry their own
+perception and ignore `--use-perception`.
+
+**Follow positions.** `back` (logistics, patrol, visually-guided following)
+and `left_side` / `right_side` (socially-aware abreast follow). Target-route
+lane bias:
 
 ```bash
 --target-lane-bias-mode {right_hand, leave_follow_side_clear}
 ```
+
+**Initial-frame target specification.** Each episode begins with a
+first-frame bounding box of the target. Modular and OA-VAT policies use the
+box to initialise their tracker / ReID; TrackVLA converts the cropped patch
+into a language description with **Qwen3-VL [15]** and feeds it as the
+policy prompt (e.g., *"follow the woman wearing a blue T-shirt and white
+shorts."*).
 
 ---
 
@@ -223,10 +263,10 @@ avoidance**, and **socially-aware following**.
 | Benchmark                             | ReID | Avoid. | Social | Follow Conf. | MB | LB | Eval. type        | Ped. interaction                          | Engine            |
 |---------------------------------------|:----:|:------:|:------:|--------------|:--:|:--:|-------------------|-------------------------------------------|-------------------|
 | EVT-Bench [1]                         | ++   | ++     | +      | Back         |    | ✓  | task-level        | ORCA*                                     | Habitat 3.0       |
-| Gym-UnrealCV [3]                      | +    | +      | +      | Back         |    | ✓  | task-level        | NavMesh                                   | Unreal Engine     |
-| DAT (aerial) [4]                      | +    | +      | +      | Back         |    | ✓  | task-level        | NavMesh                                   | Unreal Engine     |
-| TPT-Bench [5]                         | +++  | —      | —      | —            | —  | —  | perception-level  | real traj. (offline)                      | real-world seq.   |
-| Follow-Bench 1.0 [6]                  | —    | +++    | ++     | Back+Side    | ✓  |    | planning-level    | SFM / ORCA                                | 2D simulator      |
+| Gym-UnrealCV [2]                      | +    | +      | +      | Back         |    | ✓  | task-level        | NavMesh                                   | Unreal Engine     |
+| DAT (aerial) [3]                      | +    | +      | +      | Back         |    | ✓  | task-level        | NavMesh                                   | Unreal Engine     |
+| TPT-Bench [4]                         | +++  | —      | —      | —            | —  | —  | perception-level  | real traj. (offline)                      | real-world seq.   |
+| Follow-Bench 1.0 [5]                  | —    | +++    | ++     | Back+Side    | ✓  |    | planning-level    | SFM / ORCA                                | 2D simulator      |
 | **Follow-Bench 2.0 (ours)**           | ++   | +++    | +++    | Back+Side    | ✓  | ✓  | task-level        | NavMesh + SFM/ORCA + social activities    | Unreal Engine     |
 
 `+`, `++`, `+++` = weak / moderate / strong coverage; `—` = outside the
@@ -234,8 +274,17 @@ benchmark's task definition. MB = model-based planner; LB = learning-based
 planner. ORCA* indicates dense mesh-agent interactions may still allow
 penetration in crowded cases.
 
-> The LaTeX source for the camera-ready version of this table is preserved at
-> the bottom of this file (§Appendix A).
+**References for the table above.**
+
+[1] S. Wang *et al.*, "TrackVLA: Embodied Visual Tracking in the Wild," *Conference on Robot Learning (CoRL)*, 2025. *(EVT-Bench / TrackVLA)*
+
+[2] W. Qiu *et al.*, "UnrealCV: Virtual Worlds for Computer Vision," *Proc. 25th ACM Int. Conf. Multimedia*, pp. 1221–1224, 2017. *(Gym-UnrealCV)*
+
+[3] H. Sun *et al.*, "Open-World Drone Active Tracking with Goal-Centered Rewards," *Advances in Neural Information Processing Systems (NeurIPS)*, 2025. *(DAT)*
+
+[4] H. Ye *et al.*, "TPT-Bench: A Large-Scale, Long-Term and Robot-Egocentric Dataset for Benchmarking Target Person Tracking," *arXiv preprint arXiv:2505.07446*, 2025. Accepted by International Journal of Robotics Research 2026. *(TPT-Bench)*
+
+[5] H. Ye *et al.*, "Follow-Bench: A Unified Motion Planning Benchmark for Socially-Aware Robot Person Following," *arXiv preprint*, 2025. *(Follow-Bench 1.0)*
 
 ---
 
@@ -279,72 +328,3 @@ period.
   process and is non-blocking by design.
 
 ---
-
-## References
-
-[1] *EVT-Bench / TrackVLA*: Wang et al., *TrackVLA: A Vision-Language-Action
-Model for Embodied Visual Tracking*, 2025.
-[2] *OA-VAT*: Anonymous, CVPR 2026 (re-implemented baseline).
-[3] *Gym-UnrealCV*: Qiu et al., *UnrealCV*, 2017.
-[4] *DAT (aerial)*: Sun et al., open-source release.
-[5] *TPT-Bench*: Ye et al., *TPT-Bench*, 2025.
-[6] *Follow-Bench 1.0*: Ye et al., *RPF*, 2025.
-
----
-
-## Appendix A — LaTeX source for the comparison table
-
-```latex
-\begin{table}[t]
-  \centering
-  \caption{Comparison of \textbf{Follow-Bench~2.0} with representative benchmarks for embodied visual tracking (EVT), target-person tracking (TPT), and robot person following (RPF). We characterize each benchmark along the three capabilities required by socially-aware RPF: target re-identification, obstacle / occlusion avoidance, and socially-aware following. Symbols $+$, $++$, and $+++$ indicate weak, moderate, and strong coverage; ``--'' marks axes that are outside the benchmark's task definition. MB and LB denote model-based and learning-based planners. ORCA* indicates that EVT-Bench reports ORCA-based avoidance, while dense mesh-agent interactions may still allow penetration in crowded cases.}
-  \label{tab:bench-comparison}
-  \renewcommand{\arraystretch}{1.5}
-  \setlength{\tabcolsep}{10pt}
-  \resizebox{\linewidth}{!}{%
-  \begin{tabular}{l c c c l c c l l l}
-  \toprule
-  \multirow{2}{*}{\textbf{Benchmark}}
-    & \multicolumn{3}{c}{\textbf{RPF Capability Challenge}}
-    & \multirow{2}{*}{\textbf{Follow Conf.}}
-    & \multicolumn{2}{c}{\textbf{Eval. Planners}}
-    & \multirow{2}{*}{\textbf{Eval. Type}}
-    & \multirow{2}{*}{\textbf{Ped. Inter.}}
-    & \multirow{2}{*}{\textbf{Engine}} \\
-  \cline{2-4}\cline{6-7}
-  \noalign{\vskip 2.5pt}
-    & \makecell[c]{Target\\ReID}
-    & \makecell[c]{Obstacle /\\Occlusion Avoid.}
-    & \makecell[c]{Socially-Aware\\Following}
-    & & MB & LB & & & \\
-  \midrule
-  \multicolumn{10}{l}{\emph{Embodied visual-tracking benchmarks: back-following only; perception entangled inside the policy; comfort largely ignored.}}\\
-  \midrule
-  EVT-Bench~\cite{wang2025trackvla}
-    & ++ & ++ & + & Back & \xmark & \cmark
-    & task-level & ORCA* & Habitat\,3.0 \\
-  Gym-UnrealCV~\cite{qiu2017unrealcv}
-    & + & + & + & Back & \xmark & \cmark
-    & task-level & NavMesh & Unreal Engine \\
-  DAT (aerial)~\cite{sunopen}
-    & + & + & + & Back & \xmark & \cmark
-    & task-level & NavMesh & Unreal Engine \\
-  \midrule
-  \multicolumn{10}{l}{\emph{RPF-related benchmarks: the task is RPF, but perception and planning are not jointly evaluated.}}\\
-  \midrule
-  TPT-Bench~\cite{ye2025tpt}
-    & +++ & -- & -- & -- & -- & --
-    & perception-level & \makecell[l]{real traj.\\(offline)} & \emph{Real-world seq.} \\
-  Follow-Bench\,1.0~\cite{ye2025rpf}
-    & -- & +++ & ++ & Back\,+\,Side & \cmark & \xmark
-    & planning-level & SFM\,/\,ORCA & 2D Simulator \\
-  \textbf{Follow-Bench\,2.0}
-    & ++ & +++ & +++ & Back\,+\,Side & \cmark & \cmark
-    & task-level
-    & \makecell[l]{NavMesh +\\SFM/ORCA +\\social activities}
-    & Unreal Engine \\
-  \bottomrule
-  \end{tabular}%
-  }
-\end{table}
-```
