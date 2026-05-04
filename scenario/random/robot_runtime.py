@@ -89,6 +89,7 @@ class ScoutRobotRuntime:
         image_h: int = 600,
         cam_fov: float = 90.0,
         lidar_range: float = 30.0,
+        enable_side_views: bool = True,
     ) -> None:
         if self.actor is None:
             raise RuntimeError("Spawn robot before sensors.")
@@ -143,12 +144,14 @@ class ScoutRobotRuntime:
         setup_cam("rgb", "sensor.camera.rgb")
         setup_cam("depth", "sensor.camera.depth")
         setup_cam("instance", "sensor.camera.instance_segmentation")
-        setup_cam("rgb_left", "sensor.camera.rgb")
-        setup_cam("depth_left", "sensor.camera.depth")
-        setup_cam("instance_left", "sensor.camera.instance_segmentation")
-        setup_cam("rgb_right", "sensor.camera.rgb")
-        setup_cam("depth_right", "sensor.camera.depth")
-        setup_cam("instance_right", "sensor.camera.instance_segmentation")
+        # Side views are only spawned for side-follow modes; back-follow uses front only.
+        if enable_side_views:
+            setup_cam("rgb_left", "sensor.camera.rgb")
+            setup_cam("depth_left", "sensor.camera.depth")
+            setup_cam("instance_left", "sensor.camera.instance_segmentation")
+            setup_cam("rgb_right", "sensor.camera.rgb")
+            setup_cam("depth_right", "sensor.camera.depth")
+            setup_cam("instance_right", "sensor.camera.instance_segmentation")
 
         lb = bp_lib.find("sensor.lidar.ray_cast")
         lb.set_attribute("range", str(lidar_range))

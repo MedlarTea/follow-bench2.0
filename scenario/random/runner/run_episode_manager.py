@@ -1363,6 +1363,7 @@ def main() -> None:
             image_h=args.sensor_image_h,
             cam_fov=args.sensor_fov_deg,
             lidar_range=args.sensor_lidar_range,
+            enable_side_views=str(args.follow_position) in {"left_side", "right_side"},
         )
         with open(calib_path, "w", encoding="utf-8") as f:
             json.dump(robot.get_calibration(), f, indent=2)
