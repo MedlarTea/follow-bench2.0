@@ -3,17 +3,9 @@
 A benchmark for **socially-aware robot person following (RPF)** in photorealistic
 simulation. This anonymous release contains the full evaluation framework, all
 planners (model-based + learning-based), perception/ReID stack, and one of our
-four scenarios (`random`). Scenario assets, simulator binaries, and pretrained
+four scenarios (`random`, i.e., open plaza). Scenario assets, simulator binaries, and pretrained
 weights are subject to institutional release approval and will be made public
 in the camera-ready version.
-
-> **Anonymity notice (NeurIPS double-blind):**
-> Identifying information has been removed. Vendored third-party code under
-> `scenario/planners/learning_based/oa-vat/{ORTrack,dinov3-main}/` and
-> `scenario/target_identification/reid_kpr/deep_person_reid/` retains its
-> original (third-party, public) attribution.
-
----
 
 ## 1. Directory layout
 
@@ -57,7 +49,7 @@ followbench2.0-light/
     └── weight_paths.py                 # repo-relative weight resolution helper
 ```
 
-The other three scenarios (`corridor`, `doorway`, `clutter`) share the same
+The other three scenarios (`narrow passage`, `cluttered park`, `street corner`) share the same
 manager/runtime under `scenario/random/runner/`; their assets and launch
 scripts are withheld for the anonymous review and released in the
 camera-ready version.
