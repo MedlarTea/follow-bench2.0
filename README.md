@@ -108,7 +108,7 @@ Same clutter scenario and viewpoint, with only the number of pedestrians varied.
 
 
 
-## 1. Directory layout
+## 2. Directory layout
 
 ```
 followbench2.0-light/
@@ -157,9 +157,9 @@ camera-ready version.
 
 ---
 
-## 2. Setup
+## 3. Setup
 
-### 2.1 Simulator
+### 3.1 Simulator
 
 We use Unreal Engine (UE) with a custom NavMesh + crowd-flow extension. The
 custom build, walker assets, and pretrained weights are part of the
@@ -170,7 +170,7 @@ If you have access to a stock UE install, the framework imports and
 unit tests will run; full-scenario simulation additionally needs our
 walker / NavMesh assets.
 
-### 2.2 Python environment
+### 3.2 Python environment
 
 ```bash
 conda env create -f environment.yml
@@ -181,7 +181,7 @@ pip install "segment_anything @ git+https://github.com/facebookresearch/segment-
 pip install "cosine_annealing_warmup @ git+https://github.com/katsura-jp/pytorch-cosine-annealing-with-warmup"
 ```
 
-### 2.3 Weights layout
+### 3.3 Weights layout
 
 Place pretrained weights under `data/weights/` (kept out of this release):
 
@@ -205,9 +205,9 @@ path editing is required.
 
 ---
 
-## 3. Quick start
+## 4. Quick start
 
-### 3.1 Run a demo episode (random scenario)
+### 4.1 Run a demo episode (random scenario)
 
 ```bash
 cd followbench2.0-light
@@ -218,7 +218,7 @@ Useful environment overrides (consumed by `run_episode_manager.sh`):
 
 | Var                | Default | Purpose                                           |
 |--------------------|---------|---------------------------------------------------|
-| `PLANNER`          | `pid`   | follower policy (see §4 table)                    |
+| `PLANNER`          | `pid`   | follower policy (see §5 table)                    |
 | `FOLLOW_POSITION`  | `back`  | `back`, `left_side`, `right_side`                 |
 | `DESIRED_DISTANCE` | `1.5`   | metres between robot and target                   |
 
@@ -230,7 +230,7 @@ PLANNER=rda ./scenario/random/run_episode_manager.sh \
     --use-perception --reid-mode kpr
 ```
 
-### 3.2 Direct Python entry-point
+### 4.2 Direct Python entry-point
 
 ```bash
 conda run -n followbench python scenario/random/runner/run_episode_manager.py --help
@@ -239,7 +239,7 @@ conda run -n followbench python scenario/random/runner/run_episode_manager.py --
 `build_parser()` at the top of `run_episode_manager.py` is the authoritative
 list of every CLI flag.
 
-### 3.3 Evaluation
+### 4.3 Evaluation
 
 After one or more episodes finish, compute aggregated metrics:
 
@@ -251,14 +251,14 @@ conda run -n followbench python scenario/evaluation/core/score.py \
 
 Schemas, collision logic, and scoring are in `scenario/evaluation/core/`.
 
-### 3.4 Live debug visualiser
+### 4.4 Live debug visualiser
 
 Add `--debug` to any `run_episode_manager.py` call to launch the 2D top-down
 visualiser in a side process. Source under `scenario/debug_vis/`.
 
 ---
 
-## 4. Available planners and follow settings
+## 5. Available planners and follow settings
 
 Follow-Bench 2.0 ships **8 follower policies** spanning three paradigms:
 modular (BEV perception → motion planner), end-to-end vision-language-action
@@ -275,7 +275,7 @@ implement the same `FollowerPolicyAdapter` ABC
 | **MPC + DS** [7]       | `--planner rda_search`    | Modular (MB) | BEV + field-based search | back / side     | Ye *et al.* (RPF-Search) 2025 [7]   |
 | **BSO-HFC** [8]        | `--planner bso_hfc`       | Modular (MB) | BEV (Track + ReID)       | back / side     | Lyu *et al.* 2025 [8]               |
 | **TrackVLA** [1]       | `--planner trackvla`      | End-to-end VLA (LB)              | front RGB + language    | back            | Wang *et al.* 2025 [1]; reproduced on OpenTrackVLA [9] with Qwen3-4B [10] |
-| **OA-VAT** [2]         | `--planner oa_vat`        | Foundation-model + PID (LB)      | front RGB               | back            | Sun *et al.* 2026 [2]               |
+| **OA-VAT** [2]         | `--planner oa_vat`        | Foundation-model + PID      | front RGB               | back            | Sun *et al.* 2026 [2]               |
 
 The default planner is `rda_traj` ("MPC w/ Traj.").
 
@@ -311,7 +311,7 @@ The default planner is `rda_traj` ("MPC w/ Traj.").
 
 [15] S. Bai *et al.*, "Qwen3-VL Technical Report," *arXiv preprint arXiv:2511.21631*, 2025. *(target-prompt VLM)*
 
-**Modular tracking module.** Following TPT-Bench (§5, [4]), every modular policy
+**Modular tracking module.** Following TPT-Bench (see §6), every modular policy
 shares a common BEV perception frontend that combines **ByteTrack [11]** with
 **Target-ReID [12]**. The ReID backbone is selectable:
 
@@ -345,7 +345,7 @@ shorts."*).
 
 ---
 
-## 5. Comparison with prior benchmarks
+## 6. Comparison with prior benchmarks
 
 We position Follow-Bench 2.0 along three capability axes required by
 socially-aware RPF: **target re-identification**, **obstacle / occlusion
@@ -353,19 +353,17 @@ avoidance**, and **socially-aware following**.
 
 <!-- markdown rendering of the comparison table; LaTeX source kept below -->
 
-| Benchmark                             | ReID | Avoid. | Social | Follow Conf. | MB | LB | Eval. type        | Ped. interaction                          | Engine            |
+| Benchmark                             | ReID | Avoid. | Social | Follow Conf. | MB | E2E | Eval. type        | Ped. interaction                          | Engine            |
 |---------------------------------------|:----:|:------:|:------:|--------------|:--:|:--:|-------------------|-------------------------------------------|-------------------|
-| EVT-Bench [1]                         | ++   | ++     | +      | Back         |    | ✓  | task-level        | ORCA*                                     | Habitat 3.0       |
-| Gym-UnrealCV [2]                      | +    | +      | +      | Back         |    | ✓  | task-level        | NavMesh                                   | Unreal Engine     |
-| DAT (aerial) [3]                      | +    | +      | +      | Back         |    | ✓  | task-level        | NavMesh                                   | Unreal Engine     |
-| TPT-Bench [4]                         | +++  | —      | —      | —            | —  | —  | perception-level  | real traj. (offline)                      | real-world seq.   |
-| Follow-Bench 1.0 [5]                  | —    | +++    | ++     | Back+Side    | ✓  |    | planning-level    | SFM / ORCA                                | 2D simulator      |
-| **Follow-Bench 2.0 (ours)**           | ++   | +++    | +++    | Back+Side    | ✓  | ✓  | task-level        | NavMesh + SFM/ORCA + social activities    | Unreal Engine     |
+| EVT-Bench [1]                         | Mid  | Mid    | Low    | Back         |    | ✓  | task-level        | ORCA*                                     | Habitat 3.0       |
+| Gym-UnrealCV [2]                      | Low  | Low    | Low    | Back         |    | ✓  | task-level        | NavMesh                                   | Unreal Engine     |
+| DAT (aerial) [3]                      | Low  | Low    | Low    | Back         |    | ✓  | task-level        | NavMesh                                   | Unreal Engine     |
+| TPT-Bench [4]                         | High | —      | —      | —            | —  | —  | perception-level  | real traj. (offline)                      | real-world seq.   |
+| Follow-Bench 1.0 [5]                  | —    | High   | Mid    | Back+Side    | ✓  |    | planning-level    | SFM / ORCA                                | 2D simulator      |
+| **Follow-Bench 2.0 (ours)**           | Mid  | High   | High   | Back+Side    | ✓  | ✓  | task-level        | NavMesh + SFM/ORCA + social activities    | Unreal Engine     |
 
-`+`, `++`, `+++` = weak / moderate / strong coverage; `—` = outside the
-benchmark's task definition. MB = model-based planner; LB = learning-based
-planner. ORCA* indicates dense mesh-agent interactions may still allow
-penetration in crowded cases.
+``--'' denotes out-of-scope axes. E2E denotes end-to-end visual or VLA policies. 
+    ORCA* follows EVT-Bench's ORCA-based avoidance setting, although penetration may still occur in dense mesh-agent interactions.
 
 **References for the table above.**
 
@@ -381,11 +379,6 @@ penetration in crowded cases.
 
 ---
 
-## 6. Scenario showcase
-
-See the showcase and benchmark comparison at the top of this README.
-
----
 
 ## 7. Architectural notes
 
