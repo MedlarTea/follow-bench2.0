@@ -7,6 +7,107 @@ four scenarios (`random`, i.e., open plaza). Scenario assets, simulator binaries
 weights are subject to institutional release approval and will be made public
 in the camera-ready version.
 
+## 1. Scenario showcase
+
+### 1.1 Follow-Bench 2.0 (ours)
+#### (1) Dynamic Crowd Scenarios
+<table>
+  <tr>
+    <td align="center" width="25%"><b>Street Corner</b></td>
+    <td align="center" width="25%"><b>Narrow Passage</b></td>
+    <td align="center" width="25%"><b>Cluttered Park</b></td>
+    <td align="center" width="25%"><b>Open Plaza</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/corridor-showcase.gif" alt="corridor showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/doorway-showcase.gif" alt="doorway showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/clutter-showcase.gif" alt="clutter showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/random-showcase.gif" alt="random showcase" width="260"/></td>
+  </tr>
+</table>
+
+#### (2) Diverse Weather Conditions
+- Same clutter scenario and viewpoint, with only weather and lighting varied.
+<table>
+  <tr>
+    <td align="center" width="20%"><b>Clear</b></td>
+    <td align="center" width="20%"><b>Cloud</b></td>
+    <td align="center" width="20%"><b>Rain</b></td>
+    <td align="center" width="20%"><b>Fog</b></td>
+    <td align="center" width="20%"><b>Dusk</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/clear-clutter.gif" alt="clear weather showcase" width="200"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/cloud-clutter.gif" alt="cloud weather showcase" width="200"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/rain-clutter.gif" alt="rain weather showcase" width="200"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/fog-clutter.gif" alt="fog weather showcase" width="200"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/dusk-clutter.gif" alt="dusk weather showcase" width="200"/></td>
+  </tr>
+</table>
+
+#### (3) Crowd Density Variations
+
+Same clutter scenario and viewpoint, with only the number of pedestrians varied.
+
+<table>
+  <tr>
+    <td align="center" width="33%"><b>8 pedestrians</b></td>
+    <td align="center" width="33%"><b>12 pedestrians</b></td>
+    <td align="center" width="33%"><b>16 pedestrians</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/people-8-clutter.gif" alt="8 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/people-12-clutter.gif" alt="12 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/people-16-clutter.gif" alt="16 pedestrians showcase" width="260"/></td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><b>20 pedestrians</b></td>
+    <td align="center" width="33%"><b>24 pedestrians</b></td>
+    <td align="center" width="33%"><b>28 pedestrians</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/people-20-clutter.gif" alt="20 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/people-24-clutter.gif" alt="24 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/people-28-clutter.gif" alt="28 pedestrians showcase" width="260"/></td>
+  </tr>
+</table>
+
+#### (4) Crowd Flow Patterns
+- Same clutter scenario and viewpoint, with only the pedestrian flow pattern varied.
+<table>
+  <tr>
+    <td align="center" width="33%"><b>Parallel</b></td>
+    <td align="center" width="33%"><b>Perpendicular</b></td>
+    <td align="center" width="33%"><b>Chaotic</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/parallel-clutter.gif" alt="parallel crowd flow showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/perpendicular-clutter.gif" alt="perpendicular crowd flow showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/chaotic-clutter.gif" alt="chaotic crowd flow showcase" width="260"/></td>
+  </tr>
+</table>
+
+
+### 1.2 Other benchmarks
+
+<table>
+  <tr>
+    <td align="center" width="25%"><b><a href="https://github.com/wsakobe/TrackVLA">EVT-Bench</a></b></td>
+    <td align="center" width="25%"><b><a href="https://github.com/zfw1226/gym-unrealcv">Gym-UnrealCV</a></b></td>
+    <td align="center" width="25%"><b><a href="https://medlartea.github.io/tpt-bench/">TPT-Bench</a></b></td>
+    <td align="center" width="25%"><b><a href="https://follow-bench.github.io/">Follow-Bench 1.0</a></b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/othebench-showcase/evt-showcase.gif" alt="EVT showcase" width="260"/></td>
+    <td align="center"><img src="doc/othebench-showcase/gymcv-showcase.gif" alt="Gym-CV showcase" width="260"/></td>
+    <td align="center"><img src="doc/othebench-showcase/tptbench-showcase.gif" alt="TPT-Bench showcase" width="260"/></td>
+    <td align="center"><img src="doc/othebench-showcase/followbench1-showcase.gif" alt="Follow-Bench 1.0 showcase" width="260"/></td>
+  </tr>
+</table>
+
+
+
+
 ## 1. Directory layout
 
 ```
@@ -282,27 +383,7 @@ penetration in crowded cases.
 
 ## 6. Scenario showcase
 
-Follow-Bench 2.0 contains four scenarios; only `random` is in this code
-release, but representative recordings of all four are linked below.
-Videos / GIFs will be uploaded to an anonymous host before the rebuttal
-period.
-
-<table>
-  <tr>
-    <td align="center" width="25%"><b>Corridor</b><br/><i>placeholder for video — to be uploaded</i></td>
-    <td align="center" width="25%"><b>Doorway</b><br/><i>placeholder for video — to be uploaded</i></td>
-    <td align="center" width="25%"><b>Clutter</b><br/><i>placeholder for video — to be uploaded</i></td>
-    <td align="center" width="25%"><b>Random (released)</b><br/><i>placeholder for video — to be uploaded</i></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/scenario_corridor.png" alt="corridor" width="220"/></td>
-    <td align="center"><img src="docs/scenario_doorway.png" alt="doorway" width="220"/></td>
-    <td align="center"><img src="docs/scenario_clutter.png" alt="clutter" width="220"/></td>
-    <td align="center"><img src="docs/scenario_random.png" alt="random" width="220"/></td>
-  </tr>
-</table>
-
-*Image files referenced above will be added to `docs/` before the rebuttal.*
+See the showcase and benchmark comparison at the top of this README.
 
 ---
 
