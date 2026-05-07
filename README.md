@@ -7,10 +7,30 @@ four scenarios (`random`, i.e., open plaza). Scenario assets, simulator binaries
 weights are subject to institutional release approval and will be made public
 in the camera-ready version.
 
-## 1. Scenario showcase
+## 1. Benchmark motivation and showcase
 
-### 1.1 Follow-Bench 2.0 (ours)
-#### (1) Dynamic Crowd Scenarios
+### 1.1 Existing benchmarks and gaps
+- Existing embodied tracking and RPF benchmarks cover important but separate pieces of the task: visual target keeping, offline re-identification, or safety/comfort-oriented planning. None jointly evaluates perception, planning, social interaction, and closed-loop robot motion in photorealistic pedestrian-level scenes.
+
+<table>
+  <tr>
+    <td align="center" width="25%"><b><a href="https://github.com/wsakobe/TrackVLA">EVT-Bench</a></b></td>
+    <td align="center" width="25%"><b><a href="https://github.com/zfw1226/gym-unrealcv">Gym-UnrealCV</a></b></td>
+    <td align="center" width="25%"><b><a href="https://medlartea.github.io/tpt-bench/">TPT-Bench</a></b></td>
+    <td align="center" width="25%"><b><a href="https://follow-bench.github.io/">Follow-Bench 1.0</a></b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/othebench-showcase/evt-showcase.gif" alt="EVT showcase" width="260"/></td>
+    <td align="center"><img src="doc/othebench-showcase/gymcv-showcase.gif" alt="Gym-CV showcase" width="260"/></td>
+    <td align="center"><img src="doc/othebench-showcase/tptbench-showcase.gif" alt="TPT-Bench showcase" width="260"/></td>
+    <td align="center"><img src="doc/othebench-showcase/followbench1-showcase.gif" alt="Follow-Bench 1.0 showcase" width="260"/></td>
+  </tr>
+</table>
+
+- Follow-Bench 2.0 targets this missing setting with end-to-end, closed-loop RPF in 3D environments, coupling identity recovery, occlusion handling, pedestrian interaction, and motion comfort in one evaluation.
+
+### 1.2 Follow-Bench 2.0 showcase
+#### (1) Scenario Diversity
 <table>
   <tr>
     <td align="center" width="25%"><b>Street Corner</b></td>
@@ -26,8 +46,68 @@ in the camera-ready version.
   </tr>
 </table>
 
-#### (2) Diverse Weather Conditions
-- Same clutter scenario and viewpoint, with only weather and lighting varied.
+#### (2) Embodiment Diversity
+
+- Supports wheeled, quadruped, and humanoid platforms.
+
+<p align="center">
+  <img src="doc/followbench2-showcase/robots-showcase.gif" alt="robot embodiment showcase" width="380"/>
+</p>
+
+- Humanoid robot navigation in different scenarios.
+
+<table>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/humanoid-showcase-1.gif" alt="humanoid robot showcase 1" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/humanoid-show.gif" alt="humanoid robot showcase 2" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/humanoid-show-2.gif" alt="humanoid robot showcase 3" width="260"/></td>
+  </tr>
+</table>
+
+#### (3) Crowd Density Control
+
+<table>
+  <tr>
+    <td align="center" width="33%"><b>8 pedestrians</b></td>
+    <td align="center" width="33%"><b>12 pedestrians</b></td>
+    <td align="center" width="33%"><b>16 pedestrians</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/8-peds.gif" alt="8 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/12-peds.gif" alt="12 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/16-peds.gif" alt="16 pedestrians showcase" width="260"/></td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><b>20 pedestrians</b></td>
+    <td align="center" width="33%"><b>24 pedestrians</b></td>
+    <td align="center" width="33%"><b>28 pedestrians</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/20-peds.gif" alt="20 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/24-peds.gif" alt="24 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/28-peds.gif" alt="28 pedestrians showcase" width="260"/></td>
+  </tr>
+</table>
+
+#### (4) Crowd Flow Control
+
+<table>
+  <tr>
+    <td align="center" width="33%"><b>Parallel</b></td>
+    <td align="center" width="33%"><b>Perpendicular</b></td>
+    <td align="center" width="33%"><b>Chaotic</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/parallel.gif" alt="parallel crowd flow showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/perpendicular.gif" alt="perpendicular crowd flow showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/chaotic.gif" alt="chaotic crowd flow showcase" width="260"/></td>
+  </tr>
+</table>
+
+#### (5) Environmental Stressor Control
+
+- Same cluttered-park scene and viewpoint under different environmental conditions.
+
 <table>
   <tr>
     <td align="center" width="20%"><b>Clear</b></td>
@@ -45,67 +125,103 @@ in the camera-ready version.
   </tr>
 </table>
 
-#### (3) Crowd Density Variations
-
-Same clutter scenario and viewpoint, with only the number of pedestrians varied.
+- Real-time environmental control across different scenarios.
 
 <table>
   <tr>
-    <td align="center" width="33%"><b>8 pedestrians</b></td>
-    <td align="center" width="33%"><b>12 pedestrians</b></td>
-    <td align="center" width="33%"><b>16 pedestrians</b></td>
+    <td align="center" width="33%"><b>Street Corner</b></td>
+    <td align="center" width="33%"><b>Narrow Passage</b></td>
+    <td align="center" width="33%"><b>Open Plaza</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="doc/followbench2-showcase/people-8-clutter.gif" alt="8 pedestrians showcase" width="260"/></td>
-    <td align="center"><img src="doc/followbench2-showcase/people-12-clutter.gif" alt="12 pedestrians showcase" width="260"/></td>
-    <td align="center"><img src="doc/followbench2-showcase/people-16-clutter.gif" alt="16 pedestrians showcase" width="260"/></td>
-  </tr>
-  <tr>
-    <td align="center" width="33%"><b>20 pedestrians</b></td>
-    <td align="center" width="33%"><b>24 pedestrians</b></td>
-    <td align="center" width="33%"><b>28 pedestrians</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="doc/followbench2-showcase/people-20-clutter.gif" alt="20 pedestrians showcase" width="260"/></td>
-    <td align="center"><img src="doc/followbench2-showcase/people-24-clutter.gif" alt="24 pedestrians showcase" width="260"/></td>
-    <td align="center"><img src="doc/followbench2-showcase/people-28-clutter.gif" alt="28 pedestrians showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/corridor-controllable-weather.gif" alt="street corner controllable weather showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/doorway-controllable-weather.gif" alt="narrow passage controllable weather showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/random-controllable-weather.gif" alt="open plaza controllable weather showcase" width="260"/></td>
   </tr>
 </table>
 
-#### (4) Crowd Flow Patterns
-- Same clutter scenario and viewpoint, with only the pedestrian flow pattern varied.
-<table>
-  <tr>
-    <td align="center" width="33%"><b>Parallel</b></td>
-    <td align="center" width="33%"><b>Perpendicular</b></td>
-    <td align="center" width="33%"><b>Chaotic</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="doc/followbench2-showcase/parallel-clutter.gif" alt="parallel crowd flow showcase" width="260"/></td>
-    <td align="center"><img src="doc/followbench2-showcase/perpendicular-clutter.gif" alt="perpendicular crowd flow showcase" width="260"/></td>
-    <td align="center"><img src="doc/followbench2-showcase/chaotic-clutter.gif" alt="chaotic crowd flow showcase" width="260"/></td>
-  </tr>
-</table>
+#### (6) Visualization and Diagnostics
+***Note:** robot controlled by `rda_traj`, not manual teleoperation.*
 
-
-### 1.2 Other benchmarks
+- The 2D grid-map view visualizes the robot (green box), target person (orange circle), pedestrians (blue circles), planned trajectory (red curve), navigation goal (red cross), and the robot's live local map, including occupancy grids and ESDF fields.
 
 <table>
   <tr>
-    <td align="center" width="25%"><b><a href="https://github.com/wsakobe/TrackVLA">EVT-Bench</a></b></td>
-    <td align="center" width="25%"><b><a href="https://github.com/zfw1226/gym-unrealcv">Gym-UnrealCV</a></b></td>
-    <td align="center" width="25%"><b><a href="https://medlartea.github.io/tpt-bench/">TPT-Bench</a></b></td>
-    <td align="center" width="25%"><b><a href="https://follow-bench.github.io/">Follow-Bench 1.0</a></b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="doc/othebench-showcase/evt-showcase.gif" alt="EVT showcase" width="260"/></td>
-    <td align="center"><img src="doc/othebench-showcase/gymcv-showcase.gif" alt="Gym-CV showcase" width="260"/></td>
-    <td align="center"><img src="doc/othebench-showcase/tptbench-showcase.gif" alt="TPT-Bench showcase" width="260"/></td>
-    <td align="center"><img src="doc/othebench-showcase/followbench1-showcase.gif" alt="Follow-Bench 1.0 showcase" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/map-clutter-back.gif" alt="cluttered park map visualization" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/map-corridor-left.gif" alt="street corner map visualization" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/map-doorway-back.gif" alt="narrow passage map visualization" width="260"/></td>
   </tr>
 </table>
 
+- Robot-egocentric RGB views under different weather conditions.
 
+<table>
+  <tr>
+    <td align="center" width="33%"><b>Clear</b></td>
+    <td align="center" width="33%"><b>Rain</b></td>
+    <td align="center" width="33%"><b>Fog</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/clear-rgb.gif" alt="clear weather RGB view" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/rain-rgb.gif" alt="rain weather RGB view" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/fog-rgb.gif" alt="fog weather RGB view" width="260"/></td>
+  </tr>
+</table>
+
+- Multi-modal perception visualization.
+
+<div align="center">
+<table>
+  <tr>
+    <td align="center"><b>Street Corner</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/vis-back-corridor.gif" alt="multi-modal perception visualization in street corner" width="520"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Open Plaza</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/vis-back-random.gif" alt="multi-modal perception visualization in open plaza" width="520"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Night Doorway</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/vis-left-random.gif" alt="multi-modal perception visualization in night doorway" width="520"/></td>
+  </tr>
+</table>
+</div>
+
+- Some Demonstrations
+
+<table>
+  <tr>
+    <td align="center" width="33%"><b>Narrow Passage / Clear</b></td>
+    <td align="center" width="33%"><b>Open Plaza / Rain</b></td>
+    <td align="center" width="33%"><b>Cluttered Park / Clear</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-back-doorway-2.gif" alt="rda_traj narrow passage clear demo" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-back-random-rain.gif" alt="rda_traj open plaza rain demo" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-clutter-back.gif" alt="rda_traj cluttered park clear demo" width="260"/></td>
+  </tr>
+</table>
+
+<table align="center">
+  <tr>
+    <td align="center"><b>rda_traj / Back Following</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/planner/rda_traj_back.gif" alt="rda_traj back-following demo" width="520"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>rda_search / Back Following</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="doc/followbench2-showcase/planner/rda-search-back.gif" alt="rda_search back-following demo" width="520"/></td>
+  </tr>
+</table>
 
 
 ## 2. Directory layout
