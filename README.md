@@ -193,18 +193,20 @@ in the camera-ready version.
 </table>
 </div>
 
-- Some Demonstrations
+- Some Successful Demonstrations
 
 <table>
   <tr>
-    <td align="center" width="33%"><b>Narrow Passage / Clear</b></td>
-    <td align="center" width="33%"><b>Open Plaza / Rain</b></td>
-    <td align="center" width="33%"><b>Cluttered Park / Clear</b></td>
+    <td align="center" width="25%"><b>Narrow Passage</b></td>
+    <td align="center" width="25%"><b>Open Plaza</b></td>
+    <td align="center" width="25%"><b>Cluttered Park</b></td>
+    <td align="center" width="25%"><b>Side Following</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-back-doorway-2.gif" alt="rda_traj narrow passage clear demo" width="260"/></td>
-    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-back-random-rain.gif" alt="rda_traj open plaza rain demo" width="260"/></td>
-    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-clutter-back.gif" alt="rda_traj cluttered park clear demo" width="260"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-back-doorway-2.gif" alt="rda_traj narrow passage clear demo" width="240"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-back-random-rain.gif" alt="rda_traj open plaza rain demo" width="240"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/planner/rda-traj-clutter-back.gif" alt="rda_traj cluttered park clear demo" width="240"/></td>
+    <td align="center"><img src="doc/followbench2-showcase/planner/left-yes.gif" alt="rda_traj side-following clear demo" width="240"/></td>
   </tr>
 </table>
 
@@ -222,6 +224,16 @@ in the camera-ready version.
     <td align="center"><img src="doc/followbench2-showcase/planner/rda-search-back.gif" alt="rda_search back-following demo" width="520"/></td>
   </tr>
 </table>
+
+- Some Failure Cases and Challenges
+  - Target loss in oncoming crowds (`rda_search`)
+    <p align="center">
+      <img src="doc/followbench2-showcase/planner/loss-target.gif" alt="target loss caused by oncoming crowds" width="520"/>
+    </p>
+  - Pedestrian collision from fixed follow-point overlap (`bso_hfc`)
+    <p align="center">
+      <img src="doc/followbench2-showcase/planner/collision-ped.gif" alt="pedestrian collision from fixed follow-point overlap" width="520"/>
+    </p>
 
 
 ## 2. Directory layout
